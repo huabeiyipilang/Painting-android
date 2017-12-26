@@ -5,4 +5,20 @@
     android:layout_height="match_parent"
     tools:context="com.penghaonan.painting.MainActivity">
 
+    <ImageView
+        android:id="@+id/dd"
+        android:layout_width="0dp"
+        android:layout_height="100dp"
+        android:layout_marginTop="30dp"
+        android:layout_weight="1"
+        android:background="#FFFFFF"
+        android:src="@drawable/test"
+        android:visibility="gone" />
+
+
+    <com.hc.myoutline.DrawOutlineView
+        android:id="@+id/outline"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
 </LinearLayout>
