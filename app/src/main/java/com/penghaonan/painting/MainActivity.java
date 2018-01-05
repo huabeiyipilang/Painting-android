@@ -10,6 +10,8 @@ import android.view.MotionEvent;
 
 import com.penghaonan.appframework.utils.BitmapUtils;
 import com.penghaonan.appframework.utils.CollectionUtils;
+import com.penghaonan.appframework.utils.CommonUtils;
+import com.penghaonan.appframework.utils.Logger;
 import com.penghaonan.painting.base.BaseActivity;
 import com.zhihu.matisse.Matisse;
 import com.zhihu.matisse.MimeType;
@@ -42,7 +44,7 @@ public class MainActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-
+        CommonUtils.checkPermission(this, Utils.getPermissions());
         Bitmap paintBm = BitmapUtils.getRatioBitmap(R.drawable.paint, 10, 20);
         drawOutlineView.setPaintBm(paintBm);
     }
@@ -68,8 +70,6 @@ public class MainActivity extends BaseActivity {
         if (first) {
             first = false;
             drawOutlineView.beginDraw(getArray(sobelBm));
-
-
         } else
             drawOutlineView.reDraw(getArray(sobelBm));
         return true;
@@ -89,12 +89,13 @@ public class MainActivity extends BaseActivity {
             if (CollectionUtils.size(result) == 0) {
                 return;
             }
-            Uri uri = result.get(0);
+            final Uri uri = result.get(0);
             Observable.fromCallable(new Callable<Bitmap>() {
                 @Override
                 public Bitmap call() throws Exception {
-                    BitmapUtils.
-                    return null;
+                    Bitmap originBitmap = BitmapUtils.loadBitmap(uri);
+                    Bitmap bitmap = sobelBitmap(originBitmap);
+                    return bitmap;
                 }
             })
                     .observeOn(AndroidSchedulers.from(Looper.getMainLooper()))
@@ -102,22 +103,24 @@ public class MainActivity extends BaseActivity {
                     .subscribe(new Observer<Bitmap>() {
                         @Override
                         public void onSubscribe(Disposable d) {
-
+                            Logger.i("onSubscribe");
                         }
 
                         @Override
                         public void onNext(Bitmap o) {
-
+                            Logger.i("onNext");
+                            first = false;
+                            drawOutlineView.beginDraw(getArray(o));
                         }
 
                         @Override
                         public void onError(Throwable e) {
-
+                            Logger.i("onError");
                         }
 
                         @Override
                         public void onComplete() {
-
+                            Logger.i("onComplete");
                         }
                     });
         }
@@ -129,5 +132,6 @@ public class MainActivity extends BaseActivity {
         Bitmap bm = BitmapUtils.getRatioBitmap(R.drawable.test, 100, 100);
         //返回的是处理过的Bitmap
         sobelBm = SobelUtils.Sobel(bm);
+        return sobelBm;
     }
 }
